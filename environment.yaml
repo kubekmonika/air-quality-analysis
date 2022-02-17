@@ -1,5 +1,6 @@
 name: air-quality-analysis
 channels:
+  - anaconda
   - conda-forge
   - defaults
 dependencies:
@@ -13,13 +14,14 @@ dependencies:
   - backcall=0.2.0=pyh9f0ad1d_0
   - backports=1.0=py_2
   - backports.functools_lru_cache=1.6.4=pyhd8ed1ab_0
+  - beautifulsoup4=4.9.3=pyhb0f4dca_0
   - black=21.12b0=pyhd8ed1ab_0
   - blas=1.0=mkl
   - bleach=4.1.0=pyhd8ed1ab_0
   - bottleneck=1.3.2=py38hf1fa96c_1
   - brotlipy=0.7.0=py38h96a0964_1003
-  - ca-certificates=2021.10.8=h033912b_0
-  - certifi=2021.10.8=py38h50d1736_1
+  - ca-certificates=2020.10.14=0
+  - certifi=2020.6.20=py38_0
   - cffi=1.15.0=py38hc55c11b_1
   - charset-normalizer=2.0.10=pyhd8ed1ab_0
   - click=8.0.3=py38h50d1736_1
@@ -31,6 +33,8 @@ dependencies:
   - entrypoints=0.3=pyhd8ed1ab_1003
   - executing=0.8.2=pyhd8ed1ab_0
   - flit-core=3.6.0=pyhd8ed1ab_0
+  - html5lib=1.1=py_0
+  - icu=58.2=h0a44026_3
   - idna=3.3=pyhd8ed1ab_0
   - importlib-metadata=4.10.1=py38h50d1736_0
   - importlib_resources=5.4.0=pyhd8ed1ab_0
@@ -54,9 +58,13 @@ dependencies:
   - libffi=3.3=hb1e8313_2
   - libgfortran=5.0.0=9_3_0_h6c81a4c_23
   - libgfortran5=9.3.0=h6c81a4c_23
+  - libiconv=1.16=h1de35cc_0
   - liblapack=3.9.0=12_osx64_mkl
   - libsodium=1.0.18=hbcb3906_1
+  - libxml2=2.9.10=h7cdb67c_3
+  - libxslt=1.1.34=h83b36ba_0
   - llvm-openmp=12.0.1=hda6cdc1_1
+  - lxml=4.6.1=py38h63b7cb6_0
   - markupsafe=2.0.1=py38h96a0964_1
   - matplotlib-inline=0.1.3=pyhd8ed1ab_0
   - mistune=0.8.4=py38h96a0964_1005
@@ -75,7 +83,7 @@ dependencies:
   - numexpr=2.8.1=py38h2e5f0a9_0
   - numpy=1.21.2=py38h4b4dc7a_0
   - numpy-base=1.21.2=py38he0bd621_0
-  - openssl=1.1.1l=h0d85af4_0
+  - openssl=1.1.1m=hca72f7f_0
   - packaging=21.3=pyhd8ed1ab_0
   - pandas=1.3.5=py38h743cdd8_0
   - pandoc=2.17.0.1=h694c41f_1
@@ -110,6 +118,7 @@ dependencies:
   - setuptools=58.0.4=py38hecd8cb5_0
   - six=1.15.0=py38hecd8cb5_0
   - sniffio=1.2.0=py38h50d1736_2
+  - soupsieve=2.0.1=py_0
   - sqlite=3.37.0=h707629a_0
   - stack_data=0.1.4=pyhd8ed1ab_0
   - statsmodels=0.13.1=py38hbe852b5_0
