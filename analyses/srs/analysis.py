@@ -12,7 +12,8 @@ def read_data(chem, mean=False):
         data = pd.read_csv(f'../data/2020_{chem}_1g_mean.csv', parse_dates=[0])
     if not mean:
         data = pd.read_csv(f'../data/2020_{chem}_1g.csv', parse_dates=[0])
-        data['Time'] = data['Time'] - pd.to_timedelta('1 hour')
+        mask_year = data['Time'].dt.year == 2020
+        data = data[mask_year]
     else:
         raise "Wrong mean parameter"
 
