@@ -59,6 +59,42 @@ def read_all_raw_weather_data():
     return df
 
 
+def cloudiness_level(condition):
+    """Map condition to the cloudiness level"""
+    if condition == 'Fair':
+        return 'Fair'
+    if condition in ('Partly Cloudy', 'Thunder in the Vicinity'):
+        return 'Partly Cloudy'
+    if condition in ('Cloudy', 'Light Rain', 'Light Rain Shower', 'Light Drizzle', 'Light Snow Shower',
+                    'Rain', 'Rain Shower', 'Wintry Mix', 'Light Rain with Thunder', 'Light Snow'
+                    'Thunder', 'T-Storm', 'Drizzle', 'Snow', 'Heavy T-Storm', 'Mostly Cloudy'):
+        return 'Cloudy'
+    if condition in ('Mist', 'Fog', 'Shallow Fog', 'Patches of Fog', 'Haze'):
+        return 'Fog'
+
+
+def precipitation_level(condition):
+    """Map condition to the precipitation level"""
+    if condition in ('Rain', 'Rain Shower', 'Wintry Mix', 'T-Storm', 'Snow', 'Heavy T-Storm'):
+        return 'Heavy'
+    if condition in ('Light Rain', 'Light Rain Shower', 'Light Drizzle', 'Light Snow Shower',
+                     'Light Rain with Thunder', 'Light Snow', 'Drizzle'):
+        return 'Light'
+    else:
+        return 'None'
+
+
+def create_weather_features(data):
+    """Create new features"""
+    df = data.copy()
+    condition = df.pop('Condition').str.replace(' / Windy', '')
+
+    df['Cloudiness Level'] = condition.apply(cloudiness_level)
+    df['Precipitation Level'] = condition.apply(precipitation_level)
+
+    return df
+
+
 def save_curated_weather_data(data):
     """Save weather data"""
     data.to_csv(f'../data/2020_weather_1g.csv', index=False)
