@@ -11,11 +11,16 @@ def mph2kph(mph):
     return mph * 1.609344
 
 
+def inhg2hpa(inhg):
+    """Convert inHg to hPa"""
+    return inhg * 33.86389
+
+
 def read_all_raw_weather_data():
     """Read all weather data files"""
 
     dates = [d.strftime("%Y-%m-%d") for d in pd.date_range('2020-01-01', '2020-12-31', freq='D')]
-    columns = ['Time', 'Temperature', 'Wind Speed', 'Condition']
+    columns = ['Time', 'Temperature', 'Wind Speed', 'Condition', 'Pressure']
 
     dfs = []
 
@@ -34,10 +39,13 @@ def read_all_raw_weather_data():
         )
         # Temperature
         df['Temperature C'] = df.pop('Temperature').str.extract(r'(\d+)') \
-            .astype(int).apply(fahrenheit2celsius).astype(int)
+            .astype(float).apply(fahrenheit2celsius).astype(int)
         # Wind
         df['Wind Speed kph'] = df.pop('Wind Speed').str.extract(r'(\d+)') \
-            .astype(int).apply(mph2kph).astype(int)
+            .astype(float).apply(mph2kph).astype(int)
+        # Pressure
+        df['Pressure hPa'] = df.pop('Pressure').str.extract(r'(\d+\.\d+)') \
+            .astype(float).apply(inhg2hpa).astype(int)
 
         dfs.append(df)
 
