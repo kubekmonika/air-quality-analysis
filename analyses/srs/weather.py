@@ -66,7 +66,7 @@ def cloudiness_level(condition):
     if condition in ('Partly Cloudy', 'Thunder in the Vicinity'):
         return 'Partly Cloudy'
     if condition in ('Cloudy', 'Light Rain', 'Light Rain Shower', 'Light Drizzle', 'Light Snow Shower',
-                    'Rain', 'Rain Shower', 'Wintry Mix', 'Light Rain with Thunder', 'Light Snow'
+                    'Rain', 'Rain Shower', 'Wintry Mix', 'Light Rain with Thunder', 'Light Snow',
                     'Thunder', 'T-Storm', 'Drizzle', 'Snow', 'Heavy T-Storm', 'Mostly Cloudy'):
         return 'Cloudy'
     if condition in ('Mist', 'Fog', 'Shallow Fog', 'Patches of Fog', 'Haze'):
@@ -80,7 +80,10 @@ def precipitation_level(condition):
     if condition in ('Light Rain', 'Light Rain Shower', 'Light Drizzle', 'Light Snow Shower',
                      'Light Rain with Thunder', 'Light Snow', 'Drizzle'):
         return 'Light'
-    else:
+    if condition in ('Fair', 'Partly Cloudy', 'Thunder in the Vicinity', 'Cloudy',
+                    'Mostly Cloudy', 'Thunder'):
+        return 'None'
+    if condition in ('Mist', 'Fog', 'Shallow Fog', 'Patches of Fog', 'Haze'):
         return 'None'
 
 
@@ -98,3 +101,8 @@ def create_weather_features(data):
 def save_curated_weather_data(data):
     """Save weather data"""
     data.to_csv(f'../data/2020_weather_1g.csv', index=False)
+
+
+def read_curated_weather_data():
+    """Read weather data"""
+    return pd.read_csv('../data/2020_weather_1g.csv', parse_dates=[0])
