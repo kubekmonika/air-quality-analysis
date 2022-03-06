@@ -12,7 +12,8 @@ def read_data(chem, mean=False):
         data = pd.read_csv(f'../data/2020_{chem}_1g_mean.csv', parse_dates=[0])
     if not mean:
         data = pd.read_csv(f'../data/2020_{chem}_1g.csv', parse_dates=[0])
-        data['Time'] = data['Time'] - pd.to_timedelta('1 hour')
+        mask_year = data['Time'].dt.year == 2020
+        data = data[mask_year]
     else:
         raise "Wrong mean parameter"
 
@@ -25,6 +26,14 @@ def save_mean_data(data, chem):
     assert chem in compounds, f"`Wrong chemical compound,` should be one of {compounds}"
 
     data.to_csv(f'../data/2020_{chem}_1g_mean.csv', index=False)
+
+
+def read_mean_data(chem):
+    """Read data"""
+    compounds = ('C6H6', 'CO', 'NO', 'NO2', 'NOx', 'O3', 'PM10', 'PM25', 'SO2')
+    assert chem in compounds, f"`Wrong chemical compound,` should be one of {compounds}"
+
+    return pd.read_csv(f'../data/2020_{chem}_1g_mean.csv', parse_dates=[0])
 
 
 def plot_missing_values(data, columns):
