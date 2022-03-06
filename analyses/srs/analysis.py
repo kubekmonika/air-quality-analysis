@@ -28,6 +28,14 @@ def save_mean_data(data, chem):
     data.to_csv(f'../data/2020_{chem}_1g_mean.csv', index=False)
 
 
+def read_mean_data(chem):
+    """Read data"""
+    compounds = ('C6H6', 'CO', 'NO', 'NO2', 'NOx', 'O3', 'PM10', 'PM25', 'SO2')
+    assert chem in compounds, f"`Wrong chemical compound,` should be one of {compounds}"
+
+    return pd.read_csv(f'../data/2020_{chem}_1g_mean.csv', parse_dates=[0])
+
+
 def plot_missing_values(data, columns):
     """Plot missing values as % of a given day"""
     df = data[columns].isnull()
