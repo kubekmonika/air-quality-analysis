@@ -131,4 +131,4 @@ if __name__ == '__main__':
 
     final_data = merge_two_datasets(data, metadata)
 
-    save_dataset(data, args.output)
+    save_dataset(final_data, args.output)
