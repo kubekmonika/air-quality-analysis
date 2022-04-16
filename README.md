@@ -33,6 +33,10 @@ The script `clean_data.py` does the following operations:
   - 'Kod stacji' - station ID,
   - 'Pomiar' - measured PM2.5 concentrations in micrograms per cubic meter (µg/m³),
   - 'Pomiar (uzupełniony)' - measured PM2.5 concentrations with missing values filled by the mean value.
+  - 'Nazwa stacji' - station name
+  - 'Miejscowość' - city where the station is located
+  - 'WGS84 φ N' - latitude
+  - 'WGS84 λ E' - longitute
 
 ### Files structure
 
