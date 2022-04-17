@@ -21,6 +21,11 @@ def parse_args():
         type=str
     )
     parser.add_argument(
+        '-Y', '--year',
+        help='Data year',
+        type=int
+    )
+    parser.add_argument(
         '-O', '--output',
         help='Name of the output csvfile',
         type=str
@@ -40,6 +45,25 @@ def drop_columns_with_missing_values(data, threshold):
     df = data[mask]
 
     print(f'{df.shape[1]} out of {data.shape[1]} columns left')
+
+    return df
+
+
+def interpolate_missing_values(data):
+    """
+    If there are up to 5 consecutive missing values
+    then they are interpolated using a linear method
+    """
+    df = data.copy()
+
+    for c in data.columns.tolist()[1:]:
+        df[c] = df[c].interpolate(
+            method='linear',
+            limit=5,
+            limit_area='inside',
+        )
+        i = data[c].isnull().sum() - df[c].isnull().sum()
+        print(f'{i} values interpolated for {c}')
 
     return df
 
@@ -77,12 +101,32 @@ def plot_max_median(data, file_name):
     plotly.offline.plot(fig, filename=f'{file_name}.html')
 
 
-def prepare_dataset_with_data(data_file):
+def read_data(data_file, sheet_name=0):
     """
-    Premare a dataset with data
+    Read data and return it as a data frame
     """
-    data = pd.read_excel(data_file, skiprows=[0, 2, 3, 4, 5])
+    return pd.read_excel(
+        data_file, skiprows=[0, 2, 3, 4, 5],
+        sheet_name=sheet_name,
+    )
 
+
+def read_metadata(data_file, cols):
+    """
+    Read metadata and return it as a data frame
+    """
+    return pd.read_excel(
+        data_file,
+        sheet_name=0,
+        usecols=cols,
+    )
+
+
+def prepare_data(data):
+    """
+    Prepare the dataset with data
+    """
+    data = interpolate_missing_values(data)
     data = drop_columns_with_missing_values(data, 0.06)
 
     # plot_max_median(data, 'max_median')
@@ -99,13 +143,6 @@ def prepare_dataset_with_data(data_file):
         data_melted, data_filled_melted, on=["Czas", "Kod stacji"]
     )
     return data_merged
-
-
-def prepare_dataset_with_metadata(data_file):
-    """
-    Premare a dataset with data
-    """
-    return pd.read_excel(data_file, usecols=[1, 3, 11, 13, 14])
 
 
 def merge_two_datasets(data, metadata):
@@ -126,9 +163,38 @@ if __name__ == '__main__':
 
     args = parse_args()
 
-    data = prepare_dataset_with_data(args.data)
-    metadata = prepare_dataset_with_metadata(args.metadata)
+    if args.year == 2020:
+        data = read_data(args.data)
+        metadata = read_metadata(
+            args.metadata,
+            ['Kod stacji', 'Nazwa stacji', 'WGS84 φ N', 'WGS84 λ E'],
+        )
+    elif args.year == 2021:
+        data = read_data(args.data, sheet_name='2021_PM2.5_1H')
+        metadata = read_metadata(
+            args.data,
+            ['Kod krajowy stacji', 'Wskaźnik - kod', 'Czas uśredniania',
+             'Nazwa stacji', 'Szerokość geogr.', 'Długość geogr.'],
+        )
+        mask = (
+            (metadata['Wskaźnik - kod'] == 'PM2.5')
+            & (metadata['Czas uśredniania'] == '1-godzinny')
+        )
+        metadata = metadata.loc[
+            mask,
+            ['Kod krajowy stacji', 'Nazwa stacji',
+             'Szerokość geogr.', 'Długość geogr.']
+         ]
+    else:
+        raise Exception("Wrong year provided")
+
+    metadata.columns = [
+        'Kod stacji', 'Nazwa stacji', 'φ N', 'λ E'
+    ]
+
+    data = prepare_data(data)
 
     final_data = merge_two_datasets(data, metadata)
 
+    print(final_data.sample(5))
     save_dataset(final_data, args.output)
