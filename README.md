@@ -1,6 +1,6 @@
 # PM2.5 concentrations in Poland
 
-The aim of this project is an analysis of air quality data in Poland for year 2020 or 2021.
+The aim of this project is an analysis of air quality data in Poland for year 2021.
 
 This repository presents a script which was used to curate the data which was then visualised in Tableau.
 
@@ -44,8 +44,6 @@ The script `clean_data.py` does the following operations:
 - analyses  # code from previous iterations, I kept it for the future reference
 
 - data
-|- 2020_PM25_1g.xlsx  # PM2.5 data
-|- Metadane - stacje i stanowiska pomiarowe.xlsx  # metadata about measuring stations
 |- 2021_DANE_1H_24H.xlsx  # both PM2.5 data and metadada, they are in separate sheets
 
 - .gitignore
@@ -67,11 +65,7 @@ Run `conda create --name <env> --file requirements.txt` to create a conda enviro
 
 To produce the final dataset run the following command:
 ```
-# for 2020 data
-python clean_data.py -D <path to pm2.5 data> -M <path to metadata> -Y 2020 -O pm25-data-clean-2020.csv
-
-# for 2021 data
-python clean_data.py -D <path to spreadsheet with data> -Y 2021 -O pm25-data-clean-2021.csv
+python clean_data.py -D <path to spreadsheet with data> -O pm25-data-clean-2021.csv
 ```
 
 ## Inspiration

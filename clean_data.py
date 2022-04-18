@@ -16,16 +16,6 @@ def parse_args():
         type=str
     )
     parser.add_argument(
-        '-M', '--metadata',
-        help='Provide a path to the xlsx file with stations metadata',
-        type=str
-    )
-    parser.add_argument(
-        '-Y', '--year',
-        help='Data year',
-        type=int
-    )
-    parser.add_argument(
         '-O', '--output',
         help='Name of the output csvfile',
         type=str
@@ -163,30 +153,21 @@ if __name__ == '__main__':
 
     args = parse_args()
 
-    if args.year == 2020:
-        data = read_data(args.data)
-        metadata = read_metadata(
-            args.metadata,
-            ['Kod stacji', 'Nazwa stacji', 'WGS84 φ N', 'WGS84 λ E'],
-        )
-    elif args.year == 2021:
-        data = read_data(args.data, sheet_name='2021_PM2.5_1H')
-        metadata = read_metadata(
-            args.data,
-            ['Kod krajowy stacji', 'Wskaźnik - kod', 'Czas uśredniania',
-             'Nazwa stacji', 'Szerokość geogr.', 'Długość geogr.'],
-        )
-        mask = (
-            (metadata['Wskaźnik - kod'] == 'PM2.5')
-            & (metadata['Czas uśredniania'] == '1-godzinny')
-        )
-        metadata = metadata.loc[
-            mask,
-            ['Kod krajowy stacji', 'Nazwa stacji',
-             'Szerokość geogr.', 'Długość geogr.']
-         ]
-    else:
-        raise Exception("Wrong year provided")
+    data = read_data(args.data, sheet_name='2021_PM2.5_1H')
+    metadata = read_metadata(
+        args.data,
+        ['Kod krajowy stacji', 'Wskaźnik - kod', 'Czas uśredniania',
+         'Nazwa stacji', 'Szerokość geogr.', 'Długość geogr.'],
+    )
+    mask = (
+        (metadata['Wskaźnik - kod'] == 'PM2.5')
+        & (metadata['Czas uśredniania'] == '1-godzinny')
+    )
+    metadata = metadata.loc[
+        mask,
+        ['Kod krajowy stacji', 'Nazwa stacji',
+         'Szerokość geogr.', 'Długość geogr.']
+     ]
 
     metadata.columns = [
         'Kod stacji', 'Nazwa stacji', 'φ N', 'λ E'
