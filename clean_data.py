@@ -16,16 +16,6 @@ def parse_args():
         type=str
     )
     parser.add_argument(
-        '-M', '--metadata',
-        help='Provide a path to the xlsx file with stations metadata',
-        type=str
-    )
-    parser.add_argument(
-        '-Y', '--year',
-        help='Data year',
-        type=int
-    )
-    parser.add_argument(
         '-O', '--output',
         help='Name of the output csvfile',
         type=str
@@ -122,12 +112,14 @@ def read_metadata(data_file, cols):
     )
 
 
-def prepare_data(data):
+def prepare_data(data, interpolate, drop_threshold, add_hour=False):
     """
     Prepare the dataset with data
     """
-    data = interpolate_missing_values(data)
-    data = drop_columns_with_missing_values(data, 0.06)
+    if interpolate:
+        data = interpolate_missing_values(data)
+
+    data = drop_columns_with_missing_values(data, drop_threshold)
 
     # plot_max_median(data, 'max_median')
     data_filled = fill_missing_values_with_mean(data)
@@ -142,6 +134,10 @@ def prepare_data(data):
     data_merged = pd.merge(
         data_melted, data_filled_melted, on=["Czas", "Kod stacji"]
     )
+    data_merged['Czas'] = data_merged['Czas'].astype(str)
+
+    if add_hour:
+        data_merged['Czas'] = data_merged['Czas'] + ' 00:00:00'
     return data_merged
 
 
@@ -163,36 +159,41 @@ if __name__ == '__main__':
 
     args = parse_args()
 
-    if args.year == 2020:
-        data = read_data(args.data)
-        metadata = read_metadata(
-            args.metadata,
-            ['Kod stacji', 'Nazwa stacji', 'WGS84 φ N', 'WGS84 λ E'],
-        )
-    elif args.year == 2021:
-        data = read_data(args.data, sheet_name='2021_PM2.5_1H')
-        metadata = read_metadata(
-            args.data,
-            ['Kod krajowy stacji', 'Wskaźnik - kod', 'Czas uśredniania',
-             'Nazwa stacji', 'Szerokość geogr.', 'Długość geogr.'],
-        )
-        mask = (
-            (metadata['Wskaźnik - kod'] == 'PM2.5')
-            & (metadata['Czas uśredniania'] == '1-godzinny')
-        )
-        metadata = metadata.loc[
-            mask,
-            ['Kod krajowy stacji', 'Nazwa stacji',
-             'Szerokość geogr.', 'Długość geogr.']
-         ]
-    else:
-        raise Exception("Wrong year provided")
+    data1h = read_data(args.data, sheet_name='2021_PM2.5_1H')
+    data24h = read_data(args.data, sheet_name='2021_PM2.5_24H')
+
+    metadata = read_metadata(
+        args.data,
+        ['Kod krajowy stacji', 'Wskaźnik - kod', 'Czas uśredniania',
+         'Nazwa stacji', 'Szerokość geogr.', 'Długość geogr.'],
+    )
+    metamask = (
+        (metadata['Wskaźnik - kod'] == 'PM2.5')
+    )
+    metadata = metadata.loc[
+        metamask,
+        ['Kod krajowy stacji', 'Nazwa stacji',
+         'Szerokość geogr.', 'Długość geogr.']
+     ]
+    metadata = metadata.drop_duplicates()
 
     metadata.columns = [
         'Kod stacji', 'Nazwa stacji', 'φ N', 'λ E'
     ]
 
-    data = prepare_data(data)
+    data1h = prepare_data(
+        data1h, interpolate=True, drop_threshold=0.06
+    )
+    print('Data 1h', data1h.head(), sep='/n')
+    data24h = prepare_data(
+        data24h, interpolate=False, drop_threshold=0.06, add_hour=True
+    )
+    print('Data 24h', data24h.head(), sep='/n')
+
+    datamask = data24h['Kod stacji'].isin(data1h['Kod stacji'].tolist())
+    data24h = data24h[~datamask]
+
+    data = pd.concat([data1h, data24h])
 
     final_data = merge_two_datasets(data, metadata)
 
