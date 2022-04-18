@@ -21,13 +21,20 @@ The other dataset contains metadata about stations: their names, identifiers, lo
 ## Project - curating data
 
 The script `clean_data.py` does the following operations:
-1. Reads the PM2.5 data.
+1. Reads the PM2.5 1-hour data.
   - Interpolates missing values if the gap is up to 5 hours.
   - Drops stations which have more then 6% data missing.
   - For each of the remaining stations, calculates the mean value and fills the missing values with it.
   - Keeps both information: actual measurement data and curated data with filled values.
   - Transforms the dataset from horizontal to vertical format.
+1. Reads the PM2.5 24-hour data.
+  - Drops stations which have more then 6% data missing.
+  - For each of the remaining stations, calculates the mean value and fills the missing values with it.
+  - Keeps both information: actual measurement data and curated data with filled values.
+  - Transforms the dataset from horizontal to vertical format.
+  - Drops the stations which are already present in the 1-hour data.
 2. Reads the metadata.
+2. Appends PM2.5 24-hour data to the 1-hour data.
 3. Joins the PM2.5 data with metadata.
 4. Final dataset consinsts of the following columns:
   - 'Czas' - time, granularity 1 hour,
