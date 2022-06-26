@@ -2,7 +2,7 @@
 
 The aim of this project is an analysis of air quality data in Poland for year 2021.
 
-This repository presents a script which was used to curate the data which was then visualised in Tableau.
+This repository presents a script which was used to curate the data which was then visualised in Tableau ([go to the visualisation](https://public.tableau.com/views/PowietrzewPolscew2021/Dashboard?:language=en-US&:display_count=n&:origin=viz_share_link)).
 
 ## Data
 
